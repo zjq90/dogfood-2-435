@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.mapper.UserMapper">
+    
+    <resultMap id="BaseResultMap" type="com.shop.entity.User">
+        <id column="uid" jdbcType="INTEGER" property="uid"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="realname" jdbcType="VARCHAR" property="realname"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="addr" jdbcType="VARCHAR" property="addr"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        uid, username, password, realname, email, phone, addr
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM zk_user
+        WHERE uid = #{uid,jdbcType=INTEGER}
+    </select>
+
+    <select id="checkUsername" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM zk_user
+        WHERE username = #{value}
+    </select>
+
+    <select id="findByUsernameAndPassword" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM zk_user
+        WHERE username = #{username} AND password = #{password}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE FROM zk_user
+        WHERE uid = #{uid,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.shop.entity.User">
+        INSERT INTO zk_user (uid, username, password, realname, email, phone, addr)
+        VALUES (#{uid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+                #{realname,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+                #{addr,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.shop.entity.User">
+        INSERT INTO zk_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uid != null">uid,</if>
+            <if test="username != null">username,</if>
+            <if test="password != null">password,</if>
+            <if test="realname != null">realname,</if>
+            <if test="email != null">email,</if>
+            <if test="phone != null">phone,</if>
+            <if test="addr != null">addr,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="uid != null">#{uid,jdbcType=INTEGER},</if>
+            <if test="username != null">#{username,jdbcType=VARCHAR},</if>
+            <if test="password != null">#{password,jdbcType=VARCHAR},</if>
+            <if test="realname != null">#{realname,jdbcType=VARCHAR},</if>
+            <if test="email != null">#{email,jdbcType=VARCHAR},</if>
+            <if test="phone != null">#{phone,jdbcType=VARCHAR},</if>
+            <if test="addr != null">#{addr,jdbcType=VARCHAR},</if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.shop.entity.User">
+        UPDATE zk_user
+        <set>
+            <if test="username != null">username = #{username,jdbcType=VARCHAR},</if>
+            <if test="password != null">password = #{password,jdbcType=VARCHAR},</if>
+            <if test="realname != null">realname = #{realname,jdbcType=VARCHAR},</if>
+            <if test="email != null">email = #{email,jdbcType=VARCHAR},</if>
+            <if test="phone != null">phone = #{phone,jdbcType=VARCHAR},</if>
+            <if test="addr != null">addr = #{addr,jdbcType=VARCHAR},</if>
+        </set>
+        WHERE uid = #{uid,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.shop.entity.User">
+        UPDATE zk_user
+        SET username = #{username,jdbcType=VARCHAR},
+            password = #{password,jdbcType=VARCHAR},
+            realname = #{realname,jdbcType=VARCHAR},
+            email = #{email,jdbcType=VARCHAR},
+            phone = #{phone,jdbcType=VARCHAR},
+            addr = #{addr,jdbcType=VARCHAR}
+        WHERE uid = #{uid,jdbcType=INTEGER}
+    </update>
+
+</mapper>

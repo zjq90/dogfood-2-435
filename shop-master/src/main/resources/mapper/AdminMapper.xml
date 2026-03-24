@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.mapper.AdminMapper">
+    
+    <resultMap id="BaseResultMap" type="com.shop.entity.Admin">
+        <id column="aid" jdbcType="INTEGER" property="aid"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        aid, username, password
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM zk_admin
+        WHERE aid = #{aid,jdbcType=INTEGER}
+    </select>
+
+    <select id="findByUsernameAndPassword" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM zk_admin
+        WHERE username = #{username} AND password = #{password}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE FROM zk_admin
+        WHERE aid = #{aid,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.shop.entity.Admin">
+        INSERT INTO zk_admin (aid, username, password)
+        VALUES (#{aid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.shop.entity.Admin">
+        INSERT INTO zk_admin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="aid != null">aid,</if>
+            <if test="username != null">username,</if>
+            <if test="password != null">password,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="aid != null">#{aid,jdbcType=INTEGER},</if>
+            <if test="username != null">#{username,jdbcType=VARCHAR},</if>
+            <if test="password != null">#{password,jdbcType=VARCHAR},</if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.shop.entity.Admin">
+        UPDATE zk_admin
+        <set>
+            <if test="username != null">username = #{username,jdbcType=VARCHAR},</if>
+            <if test="password != null">password = #{password,jdbcType=VARCHAR},</if>
+        </set>
+        WHERE aid = #{aid,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.shop.entity.Admin">
+        UPDATE zk_admin
+        SET username = #{username,jdbcType=VARCHAR},
+            password = #{password,jdbcType=VARCHAR}
+        WHERE aid = #{aid,jdbcType=INTEGER}
+    </update>
+
+</mapper>
