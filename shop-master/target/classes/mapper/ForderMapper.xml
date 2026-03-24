@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.mapper.ForderMapper">
+    
+    <resultMap id="BaseResultMap" type="com.shop.entity.Forder">
+        <id column="fid" jdbcType="INTEGER" property="fid"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="date" jdbcType="TIMESTAMP" property="date"/>
+        <result column="total" jdbcType="DOUBLE" property="total"/>
+        <result column="post" jdbcType="VARCHAR" property="post"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="uid" jdbcType="INTEGER" property="uid"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        fid, name, phone, remark, date, total, post, address, uid, status
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM zk_forder
+        WHERE fid = #{fid,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectList" resultType="com.shop.entity.Forder">
+        SELECT <include refid="Base_Column_List"/>
+        FROM zk_forder
+        ORDER BY date DESC
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE FROM zk_forder
+        WHERE fid = #{fid,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.shop.entity.Forder" useGeneratedKeys="true" keyProperty="fid">
+        INSERT INTO zk_forder (name, phone, remark, date, total, post, address, uid, status)
+        VALUES (#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+                NOW(), #{total,jdbcType=DOUBLE}, #{post,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+                #{uid,jdbcType=INTEGER}, 0)
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.shop.entity.Forder">
+        INSERT INTO zk_forder
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fid != null">fid,</if>
+            <if test="name != null">name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="remark != null">remark,</if>
+            <if test="date != null">date,</if>
+            <if test="total != null">total,</if>
+            <if test="post != null">post,</if>
+            <if test="address != null">address,</if>
+            <if test="uid != null">uid,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="fid != null">#{fid,jdbcType=INTEGER},</if>
+            <if test="name != null">#{name,jdbcType=VARCHAR},</if>
+            <if test="phone != null">#{phone,jdbcType=VARCHAR},</if>
+            <if test="remark != null">#{remark,jdbcType=VARCHAR},</if>
+            <if test="date != null">#{date,jdbcType=TIMESTAMP},</if>
+            <if test="total != null">#{total,jdbcType=DOUBLE},</if>
+            <if test="post != null">#{post,jdbcType=VARCHAR},</if>
+            <if test="address != null">#{address,jdbcType=VARCHAR},</if>
+            <if test="uid != null">#{uid,jdbcType=INTEGER},</if>
+            <if test="status != null">#{status,jdbcType=INTEGER},</if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.shop.entity.Forder">
+        UPDATE zk_forder
+        <set>
+            <if test="name != null">name = #{name,jdbcType=VARCHAR},</if>
+            <if test="phone != null">phone = #{phone,jdbcType=VARCHAR},</if>
+            <if test="remark != null">remark = #{remark,jdbcType=VARCHAR},</if>
+            <if test="date != null">date = #{date,jdbcType=TIMESTAMP},</if>
+            <if test="total != null">total = #{total,jdbcType=DOUBLE},</if>
+            <if test="post != null">post = #{post,jdbcType=VARCHAR},</if>
+            <if test="address != null">address = #{address,jdbcType=VARCHAR},</if>
+            <if test="status != null">status = #{status,jdbcType=INTEGER},</if>
+            <if test="uid != null">uid = #{uid,jdbcType=INTEGER},</if>
+        </set>
+        WHERE fid = #{fid,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.shop.entity.Forder">
+        UPDATE zk_forder
+        SET name = #{name,jdbcType=VARCHAR},
+            phone = #{phone,jdbcType=VARCHAR},
+            remark = #{remark,jdbcType=VARCHAR},
+            date = #{date,jdbcType=TIMESTAMP},
+            total = #{total,jdbcType=DOUBLE},
+            post = #{post,jdbcType=VARCHAR},
+            address = #{address,jdbcType=VARCHAR},
+            status = #{status,jdbcType=INTEGER},
+            uid = #{uid,jdbcType=INTEGER}
+        WHERE fid = #{fid,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE zk_forder
+        SET status = #{status,jdbcType=INTEGER}
+        WHERE fid = #{fid,jdbcType=INTEGER}
+    </update>
+
+</mapper>

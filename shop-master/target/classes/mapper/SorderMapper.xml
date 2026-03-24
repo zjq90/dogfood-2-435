@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.mapper.SorderMapper">
+    
+    <resultMap id="BaseResultMap" type="com.shop.entity.Sorder">
+        <id column="sid" jdbcType="INTEGER" property="sid"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="price" jdbcType="DOUBLE" property="price"/>
+        <result column="number" jdbcType="INTEGER" property="number"/>
+        <result column="fid" jdbcType="INTEGER" property="fid"/>
+        <result column="pid" jdbcType="INTEGER" property="pid"/>
+    </resultMap>
+
+    <resultMap id="SorderWithProductResultMap" type="com.shop.entity.Sorder" extends="BaseResultMap">
+        <association property="product" javaType="com.shop.entity.Product">
+            <id column="p_pid" property="pid"/>
+            <result column="p_pname" property="pname"/>
+            <result column="p_cprice" property="cprice"/>
+            <result column="p_pic" property="pic"/>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        sid, name, price, number, fid, pid
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM zk_sorder
+        WHERE sid = #{sid,jdbcType=INTEGER}
+    </select>
+
+    <select id="listSorderByFid" parameterType="java.lang.Integer" resultType="com.shop.entity.Sorder">
+        SELECT s.sid, s.name, s.price, s.number, s.fid, s.pid,
+               p.pid as 'product.pid', p.pname as 'product.pname', p.cprice as 'product.cprice', p.pic as 'product.pic'
+        FROM zk_sorder s
+        LEFT JOIN zk_product p ON s.pid = p.pid
+        WHERE s.fid = #{fid,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE FROM zk_sorder
+        WHERE sid = #{sid,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByFid" parameterType="java.lang.Integer">
+        DELETE FROM zk_sorder
+        WHERE fid = #{fid,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="com.shop.entity.Sorder">
+        INSERT INTO zk_sorder (name, price, number, fid, pid)
+        VALUES (#{name,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, #{number,jdbcType=INTEGER},
+                #{fid,jdbcType=INTEGER}, #{pid,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.shop.entity.Sorder">
+        INSERT INTO zk_sorder
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sid != null">sid,</if>
+            <if test="name != null">name,</if>
+            <if test="price != null">price,</if>
+            <if test="number != null">number,</if>
+            <if test="fid != null">fid,</if>
+            <if test="pid != null">pid,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="sid != null">#{sid,jdbcType=INTEGER},</if>
+            <if test="name != null">#{name,jdbcType=VARCHAR},</if>
+            <if test="price != null">#{price,jdbcType=DOUBLE},</if>
+            <if test="number != null">#{number,jdbcType=INTEGER},</if>
+            <if test="fid != null">#{fid,jdbcType=INTEGER},</if>
+            <if test="pid != null">#{pid,jdbcType=INTEGER},</if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.shop.entity.Sorder">
+        UPDATE zk_sorder
+        <set>
+            <if test="name != null">name = #{name,jdbcType=VARCHAR},</if>
+            <if test="price != null">price = #{price,jdbcType=DOUBLE},</if>
+            <if test="number != null">number = #{number,jdbcType=INTEGER},</if>
+            <if test="fid != null">fid = #{fid,jdbcType=INTEGER},</if>
+            <if test="pid != null">pid = #{pid,jdbcType=INTEGER},</if>
+        </set>
+        WHERE sid = #{sid,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.shop.entity.Sorder">
+        UPDATE zk_sorder
+        SET name = #{name,jdbcType=VARCHAR},
+            price = #{price,jdbcType=DOUBLE},
+            number = #{number,jdbcType=INTEGER},
+            fid = #{fid,jdbcType=INTEGER},
+            pid = #{pid,jdbcType=INTEGER}
+        WHERE sid = #{sid,jdbcType=INTEGER}
+    </update>
+
+</mapper>
