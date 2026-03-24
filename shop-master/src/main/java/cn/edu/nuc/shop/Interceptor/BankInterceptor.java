@@ -1,39 +1,33 @@
-package cn.edu.nuc.shop.Interceptor;
+package cn.edu.nuc.shop.interceptor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+/**
+ * 后台拦截器
+ * 拦截后台管理请求，需要管理员登录
+ */
+public class BankInterceptor implements HandlerInterceptor {
 
-public class BankInterceptor extends HandlerInterceptorAdapter {
+    private static final Logger logger = LoggerFactory.getLogger(BankInterceptor.class);
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
-		
-		 String username =  (String)request.getSession().getAttribute("adminusername");   
-	        if(username == null){
-	           
-	           response.sendRedirect(request.getContextPath()+"/admin/login");
-	            return false;  
-	        }else  
-	            return true;     
-	}
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 
-	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {
-		// TODO Auto-generated method stub
-		super.postHandle(request, response, handler, modelAndView);
-	}
+        String username = (String) request.getSession().getAttribute("adminusername");
 
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {
-		// TODO Auto-generated method stub
-		super.afterCompletion(request, response, handler, ex);
-	}
+        if (username == null) {
+            logger.debug("管理员未登录，拦截请求路径: {}", request.getServletPath());
+            response.sendRedirect(request.getContextPath() + "/admin/login");
+            return false;
+        }
 
-	
+        logger.debug("管理员已登录，放行请求: {}", username);
+        return true;
+    }
 }

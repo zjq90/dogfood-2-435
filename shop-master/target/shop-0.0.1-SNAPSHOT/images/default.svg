@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect width="200" height="200" fill="#f0f0f0"/>
+  <rect x="10" y="10" width="180" height="180" fill="#ffffff" stroke="#cccccc" stroke-width="2"/>
+  <text x="100" y="110" font-family="Arial" font-size="14" fill="#666666" text-anchor="middle">商品图片</text>
+  <text x="100" y="130" font-family="Arial" font-size="12" fill="#999999" text-anchor="middle">Product Image</text>
+</svg>

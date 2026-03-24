@@ -1,0 +1,90 @@
+# 服务器配置
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# Spring配置
+spring:
+  application:
+    name: shop
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/myshop?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 30000
+      connection-timeout: 20000
+      auto-commit: true
+
+  # MVC配置
+  mvc:
+    view:
+      prefix: /
+      suffix: .jsp
+    static-path-pattern: /static/**
+
+  # 资源配置
+  web:
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${web.upload-path:./uploads/}
+
+  # 文件上传配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+      resolve-lazily: true
+
+  # 模板配置
+  thymeleaf:
+    cache: false
+    enabled: false
+
+# MyBatis配置
+mybatis:
+  mapper-locations: classpath:cn/edu/nuc/shop/mapper/*.xml
+  type-aliases-package: cn.edu.nuc.shop.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    lazy-loading-enabled: false
+    multiple-result-sets-enabled: true
+    use-column-label: true
+    use-generated-keys: true
+    default-statement-timeout: 25000
+    default-fetch-size: 100
+
+# PageHelper分页插件配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+  page-size-zero: true
+
+# 日志配置
+logging:
+  level:
+    cn.edu.nuc.shop: DEBUG
+    org.springframework.web: INFO
+    org.mybatis: DEBUG
+    com.zaxxer.hikari: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
+  file:
+    name: logs/shop.log
+    max-size: 100MB
+    max-history: 30
+    total-size-cap: 1GB
+    clean-history-on-start: false

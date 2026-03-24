@@ -1,72 +1,88 @@
 package cn.edu.nuc.shop.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import cn.edu.nuc.shop.entity.User;
+import cn.edu.nuc.shop.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
 
-import cn.edu.nuc.shop.entiry.User;
-import cn.edu.nuc.shop.service.interfaces.UserService;
-
+/**
+ * 用户控制器
+ * 处理用户登录、注册、登出等请求
+ */
 @Controller
 @RequestMapping("/user")
 public class UserController {
-	@Autowired
-	private UserService userService;
 
-	@RequestMapping(value="/login",method=RequestMethod.GET)
-	public String tologin(){
-		return "redirect:/login.jsp";
-	}
-	
-	@RequestMapping(value="/login",method=RequestMethod.POST)
-	public String login(User user,HttpSession session){
-		try {
-			User exituser = userService.login(user.getUsername(), user.getPassword());
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-			session.setAttribute("frontuser", exituser.getUsername());
+    @Autowired
+    private UserService userService;
 
-			session.removeAttribute("msg");
+    /**
+     * 跳转到用户登录页面
+     * @return 登录页面路径
+     */
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String toLogin() {
+        logger.debug("跳转到用户登录页面");
+        return "redirect:/login.jsp";
+    }
 
-			return "redirect:/product/frontlist";
+    /**
+     * 用户登录
+     * @param user 用户信息（用户名、密码）
+     * @param session Session对象
+     * @return 重定向路径
+     */
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String login(User user, HttpSession session) {
+        logger.info("用户登录请求，用户名: {}", user.getUsername());
+        try {
+            User existUser = userService.login(user.getUsername(), user.getPassword());
 
-		} catch (Exception e) {
+            // 登录成功，将用户信息存入Session
+            session.setAttribute("frontuser", existUser.getUsername());
+            session.setAttribute("frontuserId", existUser.getUid());
+            session.removeAttribute("msg");
 
-			session.setAttribute("msg", "用户或密码错误");
-		}
-		return "forward:/login.jsp";
-//		User exituser =  userService.login(user);
-//
-//		if(exituser ==null){
-//
-//			model.addAttribute("msg","用户名或密码错误");
-//			return "forward:/login.jsp";
-//		}
-//		request.getSession()
-//		.setAttribute("frontuser", exituser.getUsername());
-//		request.getSession()
-//		.setAttribute("frontuserId", exituser.getUid());
-//
-//		String path = (String) request.getSession().getAttribute("orderpath");
-//
-//		if(path!=null){
+            logger.info("用户登录成功: {}", user.getUsername());
 
-//			return "redirect:" + path;
-//
-//		}
-//		return "redirect:/product/frontlist";
-	}
-	@RequestMapping(value="/logout",method=RequestMethod.GET)
-	public String logout(User user,HttpSession session){
+            // 检查是否有之前保存的请求路径
+            String orderPath = (String) session.getAttribute("orderpath");
+            if (orderPath != null) {
+                session.removeAttribute("orderpath");
+                logger.debug("跳转到之前的请求路径: {}", orderPath);
+                return "redirect:" + orderPath;
+            }
 
-		session.removeAttribute("frontuser");
+            return "redirect:/product/frontlist";
 
-		return "redirect:/login.jsp";
-	}
+        } catch (Exception e) {
+            logger.warn("用户登录失败: {}，原因: {}", user.getUsername(), e.getMessage());
+            session.setAttribute("msg", "用户名或密码错误");
+        }
+        return "forward:/login.jsp";
+    }
+
+    /**
+     * 用户登出
+     * @param session Session对象
+     * @return 重定向到登录页面
+     */
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logout(HttpSession session) {
+        String username = (String) session.getAttribute("frontuser");
+        logger.info("用户登出: {}", username);
+
+        session.removeAttribute("frontuser");
+        session.removeAttribute("frontuserId");
+
+        return "redirect:/login.jsp";
+    }
 }
