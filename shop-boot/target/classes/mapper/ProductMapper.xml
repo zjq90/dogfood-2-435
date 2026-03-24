@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.shop.mapper.ProductMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.shop.entity.Product">
+        <id column="pid" jdbcType="INTEGER" property="productId"/>
+        <result column="pname" jdbcType="VARCHAR" property="productName"/>
+        <result column="sprice" jdbcType="DECIMAL" property="salePrice"/>
+        <result column="cprice" jdbcType="DECIMAL" property="costPrice"/>
+        <result column="pic" jdbcType="VARCHAR" property="picture"/>
+        <result column="pdesc" jdbcType="VARCHAR" property="description"/>
+        <result column="is_hot" jdbcType="TINYINT" property="isHot"/>
+        <result column="pdate" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="number" jdbcType="INTEGER" property="stock"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        pid, pname, sprice, cprice, pic, pdesc, is_hot, pdate, number
+    </sql>
+
+    <!-- 根据主键查询商品 -->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_product
+        WHERE pid = #{productId,jdbcType=INTEGER}
+    </select>
+
+    <!-- 查询所有商品 -->
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_product
+        ORDER BY pdate DESC
+    </select>
+
+    <!-- 根据商品名称模糊查询 -->
+    <select id="findByProductNameLike" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_product
+        WHERE pname LIKE CONCAT('%', #{productName,jdbcType=VARCHAR}, '%')
+        ORDER BY pdate DESC
+    </select>
+
+    <!-- 查询最新商品 -->
+    <select id="selectNewProducts" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_product
+        ORDER BY pdate DESC
+        LIMIT #{limit,jdbcType=INTEGER}
+    </select>
+
+    <!-- 查询热门商品 -->
+    <select id="selectHotProducts" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_product
+        WHERE is_hot = 1
+        ORDER BY pdate DESC
+        LIMIT #{limit,jdbcType=INTEGER}
+    </select>
+
+    <!-- 检查商品库存 -->
+    <select id="checkStock" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_product
+        WHERE pid = #{productId,jdbcType=INTEGER}
+          AND number >= #{quantity,jdbcType=INTEGER}
+    </select>
+
+    <!-- 根据主键删除商品 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE
+        FROM zk_product
+        WHERE pid = #{productId,jdbcType=INTEGER}
+    </delete>
+
+    <!-- 插入商品(全字段) -->
+    <insert id="insert" parameterType="com.example.shop.entity.Product" useGeneratedKeys="true" keyProperty="productId">
+        INSERT INTO zk_product (pid, pname, sprice, cprice, pic, pdesc, is_hot, pdate, number)
+        VALUES (#{productId,jdbcType=INTEGER}, #{productName,jdbcType=VARCHAR}, #{salePrice,jdbcType=DECIMAL},
+                #{costPrice,jdbcType=DECIMAL}, #{picture,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+                #{isHot,jdbcType=TINYINT}, NOW(), #{stock,jdbcType=INTEGER})
+    </insert>
+
+    <!-- 插入商品(选择性) -->
+    <insert id="insertSelective" parameterType="com.example.shop.entity.Product" useGeneratedKeys="true"
+            keyProperty="productId">
+        INSERT INTO zk_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">pid,</if>
+            <if test="productName != null">pname,</if>
+            <if test="salePrice != null">sprice,</if>
+            <if test="costPrice != null">cprice,</if>
+            <if test="picture != null">pic,</if>
+            <if test="description != null">pdesc,</if>
+            <if test="isHot != null">is_hot,</if>
+            pdate,
+            <if test="stock != null">number,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">#{productId,jdbcType=INTEGER},</if>
+            <if test="productName != null">#{productName,jdbcType=VARCHAR},</if>
+            <if test="salePrice != null">#{salePrice,jdbcType=DECIMAL},</if>
+            <if test="costPrice != null">#{costPrice,jdbcType=DECIMAL},</if>
+            <if test="picture != null">#{picture,jdbcType=VARCHAR},</if>
+            <if test="description != null">#{description,jdbcType=VARCHAR},</if>
+            <if test="isHot != null">#{isHot,jdbcType=TINYINT},</if>
+            NOW(),
+            <if test="stock != null">#{stock,jdbcType=INTEGER},</if>
+        </trim>
+    </insert>
+
+    <!-- 根据主键更新商品(选择性) -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.shop.entity.Product">
+        UPDATE zk_product
+        <set>
+            <if test="productName != null">pname = #{productName,jdbcType=VARCHAR},</if>
+            <if test="salePrice != null">sprice = #{salePrice,jdbcType=DECIMAL},</if>
+            <if test="costPrice != null">cprice = #{costPrice,jdbcType=DECIMAL},</if>
+            <if test="picture != null">pic = #{picture,jdbcType=VARCHAR},</if>
+            <if test="description != null">pdesc = #{description,jdbcType=VARCHAR},</if>
+            <if test="isHot != null">is_hot = #{isHot,jdbcType=TINYINT},</if>
+            <if test="stock != null">number = #{stock,jdbcType=INTEGER},</if>
+        </set>
+        WHERE pid = #{productId,jdbcType=INTEGER}
+    </update>
+
+    <!-- 根据主键更新商品(全字段) -->
+    <update id="updateByPrimaryKey" parameterType="com.example.shop.entity.Product">
+        UPDATE zk_product
+        SET pname   = #{productName,jdbcType=VARCHAR},
+            sprice  = #{salePrice,jdbcType=DECIMAL},
+            cprice  = #{costPrice,jdbcType=DECIMAL},
+            pic     = #{picture,jdbcType=VARCHAR},
+            pdesc   = #{description,jdbcType=VARCHAR},
+            is_hot  = #{isHot,jdbcType=TINYINT},
+            number  = #{stock,jdbcType=INTEGER}
+        WHERE pid = #{productId,jdbcType=INTEGER}
+    </update>
+
+    <!-- 扣减商品库存 -->
+    <update id="deductStock">
+        UPDATE zk_product
+        SET number = number - #{quantity,jdbcType=INTEGER}
+        WHERE pid = #{productId,jdbcType=INTEGER}
+          AND number >= #{quantity,jdbcType=INTEGER}
+    </update>
+
+    <!-- 批量扣减商品库存 -->
+    <update id="batchDeductStock">
+        <foreach collection="products" item="product" separator=";">
+            UPDATE zk_product
+            SET number = number - #{product.stock,jdbcType=INTEGER}
+            WHERE pid = #{product.productId,jdbcType=INTEGER}
+            AND number >= #{product.stock,jdbcType=INTEGER}
+        </foreach>
+    </update>
+
+</mapper>

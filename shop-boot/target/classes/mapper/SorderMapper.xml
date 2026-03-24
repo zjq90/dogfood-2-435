@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.shop.mapper.SorderMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.shop.entity.Sorder">
+        <id column="sid" jdbcType="INTEGER" property="itemId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="price" jdbcType="DOUBLE" property="price"/>
+        <result column="number" jdbcType="INTEGER" property="number"/>
+        <result column="fid" jdbcType="INTEGER" property="orderId"/>
+        <result column="pid" jdbcType="INTEGER" property="productId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        sid, name, price, number, fid, pid
+    </sql>
+
+    <!-- 根据主键查询订单项 -->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_sorder
+        WHERE sid = #{itemId,jdbcType=INTEGER}
+    </select>
+
+    <!-- 根据订单ID查询订单项列表 -->
+    <select id="selectByOrderId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_sorder
+        WHERE fid = #{orderId,jdbcType=INTEGER}
+    </select>
+
+    <!-- 根据主键删除订单项 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE
+        FROM zk_sorder
+        WHERE sid = #{itemId,jdbcType=INTEGER}
+    </delete>
+
+    <!-- 根据订单ID删除订单项 -->
+    <delete id="deleteByOrderId" parameterType="java.lang.Integer">
+        DELETE
+        FROM zk_sorder
+        WHERE fid = #{orderId,jdbcType=INTEGER}
+    </delete>
+
+    <!-- 插入订单项(全字段) -->
+    <insert id="insert" parameterType="com.example.shop.entity.Sorder" useGeneratedKeys="true" keyProperty="itemId">
+        INSERT INTO zk_sorder (name, price, number, fid, pid)
+        VALUES (#{name,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, #{number,jdbcType=INTEGER},
+                #{orderId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER})
+    </insert>
+
+    <!-- 插入订单项(选择性) -->
+    <insert id="insertSelective" parameterType="com.example.shop.entity.Sorder" useGeneratedKeys="true"
+            keyProperty="itemId">
+        INSERT INTO zk_sorder
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="price != null">price,</if>
+            <if test="number != null">number,</if>
+            <if test="orderId != null">fid,</if>
+            <if test="productId != null">pid,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name,jdbcType=VARCHAR},</if>
+            <if test="price != null">#{price,jdbcType=DOUBLE},</if>
+            <if test="number != null">#{number,jdbcType=INTEGER},</if>
+            <if test="orderId != null">#{orderId,jdbcType=INTEGER},</if>
+            <if test="productId != null">#{productId,jdbcType=INTEGER},</if>
+        </trim>
+    </insert>
+
+    <!-- 批量插入订单项 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO zk_sorder (name, price, number, fid, pid)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.name,jdbcType=VARCHAR}, #{item.price,jdbcType=DOUBLE}, #{item.number,jdbcType=INTEGER},
+             #{item.orderId,jdbcType=INTEGER}, #{item.productId,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <!-- 根据主键更新订单项(选择性) -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.shop.entity.Sorder">
+        UPDATE zk_sorder
+        <set>
+            <if test="name != null">name = #{name,jdbcType=VARCHAR},</if>
+            <if test="price != null">price = #{price,jdbcType=DOUBLE},</if>
+            <if test="number != null">number = #{number,jdbcType=INTEGER},</if>
+            <if test="orderId != null">fid = #{orderId,jdbcType=INTEGER},</if>
+            <if test="productId != null">pid = #{productId,jdbcType=INTEGER},</if>
+        </set>
+        WHERE sid = #{itemId,jdbcType=INTEGER}
+    </update>
+
+    <!-- 根据主键更新订单项(全字段) -->
+    <update id="updateByPrimaryKey" parameterType="com.example.shop.entity.Sorder">
+        UPDATE zk_sorder
+        SET name   = #{name,jdbcType=VARCHAR},
+            price  = #{price,jdbcType=DOUBLE},
+            number = #{number,jdbcType=INTEGER},
+            fid    = #{orderId,jdbcType=INTEGER},
+            pid    = #{productId,jdbcType=INTEGER}
+        WHERE sid = #{itemId,jdbcType=INTEGER}
+    </update>
+
+</mapper>
