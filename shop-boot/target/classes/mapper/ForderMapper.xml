@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.shop.mapper.ForderMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.shop.entity.Forder">
+        <id column="fid" jdbcType="INTEGER" property="orderId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="addr" jdbcType="VARCHAR" property="addr"/>
+        <result column="total" jdbcType="DOUBLE" property="total"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="fdate" jdbcType="TIMESTAMP" property="fdate"/>
+        <result column="uid" jdbcType="INTEGER" property="userId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        fid, name, phone, addr, total, status, fdate, uid
+    </sql>
+
+    <!-- 根据主键查询订单 -->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_forder
+        WHERE fid = #{orderId,jdbcType=INTEGER}
+    </select>
+
+    <!-- 查询所有订单 -->
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_forder
+        ORDER BY fdate DESC
+    </select>
+
+    <!-- 根据用户ID查询订单 -->
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM zk_forder
+        WHERE uid = #{userId,jdbcType=INTEGER}
+        ORDER BY fdate DESC
+    </select>
+
+    <!-- 根据主键删除订单 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE
+        FROM zk_forder
+        WHERE fid = #{orderId,jdbcType=INTEGER}
+    </delete>
+
+    <!-- 插入订单(全字段) -->
+    <insert id="insert" parameterType="com.example.shop.entity.Forder" useGeneratedKeys="true" keyProperty="orderId">
+        INSERT INTO zk_forder (fid, name, phone, addr, total, status, fdate, uid)
+        VALUES (#{orderId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+                #{addr,jdbcType=VARCHAR}, #{total,jdbcType=DOUBLE}, #{status,jdbcType=INTEGER},
+                #{fdate,jdbcType=TIMESTAMP}, #{userId,jdbcType=INTEGER})
+    </insert>
+
+    <!-- 插入订单(选择性) -->
+    <insert id="insertSelective" parameterType="com.example.shop.entity.Forder" useGeneratedKeys="true"
+            keyProperty="orderId">
+        INSERT INTO zk_forder
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">fid,</if>
+            <if test="name != null">name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="addr != null">addr,</if>
+            <if test="total != null">total,</if>
+            <if test="status != null">status,</if>
+            <if test="fdate != null">fdate,</if>
+            <if test="userId != null">uid,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId,jdbcType=INTEGER},</if>
+            <if test="name != null">#{name,jdbcType=VARCHAR},</if>
+            <if test="phone != null">#{phone,jdbcType=VARCHAR},</if>
+            <if test="addr != null">#{addr,jdbcType=VARCHAR},</if>
+            <if test="total != null">#{total,jdbcType=DOUBLE},</if>
+            <if test="status != null">#{status,jdbcType=INTEGER},</if>
+            <if test="fdate != null">#{fdate,jdbcType=TIMESTAMP},</if>
+            <if test="userId != null">#{userId,jdbcType=INTEGER},</if>
+        </trim>
+    </insert>
+
+    <!-- 根据主键更新订单(选择性) -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.shop.entity.Forder">
+        UPDATE zk_forder
+        <set>
+            <if test="name != null">name = #{name,jdbcType=VARCHAR},</if>
+            <if test="phone != null">phone = #{phone,jdbcType=VARCHAR},</if>
+            <if test="addr != null">addr = #{addr,jdbcType=VARCHAR},</if>
+            <if test="total != null">total = #{total,jdbcType=DOUBLE},</if>
+            <if test="status != null">status = #{status,jdbcType=INTEGER},</if>
+            <if test="fdate != null">fdate = #{fdate,jdbcType=TIMESTAMP},</if>
+            <if test="userId != null">uid = #{userId,jdbcType=INTEGER},</if>
+        </set>
+        WHERE fid = #{orderId,jdbcType=INTEGER}
+    </update>
+
+    <!-- 根据主键更新订单(全字段) -->
+    <update id="updateByPrimaryKey" parameterType="com.example.shop.entity.Forder">
+        UPDATE zk_forder
+        SET name   = #{name,jdbcType=VARCHAR},
+            phone  = #{phone,jdbcType=VARCHAR},
+            addr   = #{addr,jdbcType=VARCHAR},
+            total  = #{total,jdbcType=DOUBLE},
+            status = #{status,jdbcType=INTEGER},
+            fdate  = #{fdate,jdbcType=TIMESTAMP},
+            uid    = #{userId,jdbcType=INTEGER}
+        WHERE fid = #{orderId,jdbcType=INTEGER}
+    </update>
+
+    <!-- 更新订单状态为已发货 -->
+    <update id="updateStatusToShipped" parameterType="java.lang.Integer">
+        UPDATE zk_forder
+        SET status = 1
+        WHERE fid = #{orderId,jdbcType=INTEGER}
+    </update>
+
+</mapper>
