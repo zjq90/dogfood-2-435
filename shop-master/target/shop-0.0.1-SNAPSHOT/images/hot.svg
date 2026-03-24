@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect width="200" height="200" fill="#e8f4f8"/>
+  <circle cx="100" cy="100" r="80" fill="#4a90e2"/>
+  <text x="100" y="108" font-family="Arial" font-size="24" fill="#ffffff" text-anchor="middle">HOT</text>
+  <text x="100" y="140" font-family="Arial" font-size="12" fill="#666666" text-anchor="middle">热门商品</text>
+</svg>

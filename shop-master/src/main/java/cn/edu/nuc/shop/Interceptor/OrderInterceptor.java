@@ -1,43 +1,35 @@
-package cn.edu.nuc.shop.Interceptor;
+package cn.edu.nuc.shop.interceptor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+/**
+ * 订单拦截器
+ * 拦截需要登录才能访问的请求
+ */
+public class OrderInterceptor implements HandlerInterceptor {
 
-public class OrderInterceptor extends HandlerInterceptorAdapter {
+    private static final Logger logger = LoggerFactory.getLogger(OrderInterceptor.class);
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
-		
-		
-		 String username =  (String)request.getSession().getAttribute("frontuser");
-		 
-	        if(username == null){  
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 
-	           request.getSession().setAttribute("orderpath", request.getServletPath());
-	           
-	           response.sendRedirect(request.getContextPath()+"/user/login");
-	            return false;  
-	        }else  
-	            return true;     
-	}
+        String username = (String) request.getSession().getAttribute("frontuser");
 
-	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {
-		// TODO Auto-generated method stub
-		super.postHandle(request, response, handler, modelAndView);
-	}
+        if (username == null) {
+            logger.debug("用户未登录，拦截请求路径: {}", request.getServletPath());
+            // 保存当前请求路径，登录后跳转
+            request.getSession().setAttribute("orderpath", request.getServletPath());
+            response.sendRedirect(request.getContextPath() + "/user/login");
+            return false;
+        }
 
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {
-		// TODO Auto-generated method stub
-		super.afterCompletion(request, response, handler, ex);
-	}
-
-	
+        logger.debug("用户已登录，放行请求: {}", username);
+        return true;
+    }
 }

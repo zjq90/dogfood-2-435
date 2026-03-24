@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="springmvc_spring_mybatis.war">
+    <root id="archive" name="shop-0.0.1-SNAPSHOT.war">
       <element id="artifact" artifact-name="shop-master:war exploded" />
     </root>
   </artifact>
